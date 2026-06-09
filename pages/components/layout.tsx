@@ -18,8 +18,13 @@ export default function Layout({ children }: LayoutProps) {
       {/* Fixed Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Image src="/logo.svg" alt="RifumoApps Logo" width={40} height={40} />
-          <span className="text-xl font-bold">RifumoApps</span>
+          <Image
+            src="/images/launc-Logo.png"
+            alt="LaunchPad Digital Logo"
+            width={70}
+            height={70}
+          />
+          <span className="text-xl font-bold">LaunchPad Digital</span>
         </div>
         <nav className="flex items-center space-x-4">
           <Link href="/">Home</Link>
@@ -35,13 +40,13 @@ export default function Layout({ children }: LayoutProps) {
 
       {/* Fixed Footer */}
       <footer className="fixed bottom-0 left-0 right-0 z-50 bg-gray-100 border-t border-gray-200 p-4 text-center text-sm text-gray-600">
-        © {new Date().getFullYear()} RifumoApps. All rights reserved.
+        © {new Date().getFullYear()} LaunchPad Digital. All rights reserved.
       </footer>
 
       {/* Fixed Social Icons */}
       <div className="fixed bottom-4 right-4 z-50 flex space-x-4 text-xl">
         <a
-          href="https://facebook.com"
+          href="https://facebook.com/Successdigitalmark"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-600 hover:text-blue-600"
@@ -49,7 +54,7 @@ export default function Layout({ children }: LayoutProps) {
           <FaFacebookF />
         </a>
         <a
-          href="https://instagram.com"
+          href="https://instagram.com/khoza5885"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-600 hover:text-pink-500"
