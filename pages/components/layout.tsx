@@ -7,6 +7,7 @@ import {
   FaWhatsapp,
   FaXTwitter,
 } from "react-icons/fa6";
+import ChatBot from "./chatbot";
 
 type LayoutProps = {
   children: ReactNode;
@@ -78,6 +79,7 @@ export default function Layout({ children }: LayoutProps) {
           <FaXTwitter />
         </a>
       </div>
+      <ChatBot />
     </div>
   );
 }

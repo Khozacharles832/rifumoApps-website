@@ -1,133 +1,194 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const FORM_ENDPOINT = "https://formspree.io/f/mjgdranr";
+
+type Lead = {
+  name: string;
+  appType: string;
+  budget: string;
+  contact: string;
+};
 
 export default function ChatBot() {
-  const [step, setStep] = useState(0);
+  const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [step, setStep] = useState(0);
+  const [typing, setTyping] = useState(false);
 
-  const [lead, setLead] = useState({
+  const [lead, setLead] = useState<Lead>({
+    name: "",
     appType: "",
-    description: "",
+    budget: "",
     contact: "",
   });
 
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: "Hi 👋 Welcome to LaunchPad Digital. What type of app would you like to build?",
+      text: "👋 Hi! I’m your LaunchPad assistant. What’s your name?",
     },
   ]);
 
-  const sendMessage = () => {
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const playSound = (type: "send" | "receive") => {
+    const audio = new Audio(
+      type === "send" ? "/sounds/send.mp3" : "/sounds/receive.mp3",
+    );
+    audio.volume = 0.4;
+    audio.play();
+  };
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, typing]);
+
+  const addBotMessage = (text: string) => {
+    setTyping(true);
+
+    setTimeout(() => {
+      setTyping(false);
+      setMessages((prev) => [...prev, { sender: "bot", text }]);
+      playSound("receive");
+    }, 900);
+  };
+
+  const sendToFormspree = async (data: Lead) => {
+    await fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  };
+
+  const handleSend = async () => {
     if (!input.trim()) return;
 
-    setMessages((prev) => [...prev, { sender: "user", text: input }]);
+    const value = input.trim();
+
+    setMessages((prev) => [...prev, { sender: "user", text: value }]);
+
+    playSound("send");
+    setInput("");
 
     if (step === 0) {
-      setLead({ ...lead, appType: input });
-
-      setMessages((prev) => [
-        ...prev,
-        { sender: "user", text: input },
-        { sender: "bot", text: "Please describe your app idea." },
-      ]);
-
+      setLead((p) => ({ ...p, name: value }));
+      setTimeout(
+        () => addBotMessage("Nice to meet you! What type of app do you need?"),
+        500,
+      );
       setStep(1);
     } else if (step === 1) {
-      setLead({ ...lead, description: input });
-
-      setMessages((prev) => [
-        ...prev,
-        { sender: "user", text: input },
-        {
-          sender: "bot",
-          text: "What's your WhatsApp number or email?",
-        },
-      ]);
-
+      setLead((p) => ({ ...p, appType: value }));
+      setTimeout(() => addBotMessage("Great. What’s your budget range?"), 500);
       setStep(2);
     } else if (step === 2) {
-      const updatedLead = {
+      setLead((p) => ({ ...p, budget: value }));
+      setTimeout(
+        () => addBotMessage("Perfect. What’s your email or WhatsApp number?"),
+        500,
+      );
+      setStep(3);
+    } else if (step === 3) {
+      const finalLead = {
         ...lead,
-        contact: input,
+        contact: value,
       };
 
-      setLead(updatedLead);
+      setLead(finalLead);
 
-      const phone = "27721948525"; // Your WhatsApp number
+      setTimeout(() => addBotMessage("🚀 Sending your request..."), 600);
 
-      const whatsappMessage = `
-New Website Lead
+      await sendToFormspree(finalLead);
 
-App Type:
-${updatedLead.appType}
+      setTimeout(
+        () => addBotMessage("✅ Done! We’ll contact you within 24 hours."),
+        1200,
+      );
 
-Description:
-${updatedLead.description}
-
-Contact:
-${updatedLead.contact}
-`;
-
-      const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(
-        whatsappMessage,
-      )}`;
-
-      window.open(whatsappUrl, "_blank");
-
-      setMessages((prev) => [
-        ...prev,
-        { sender: "user", text: input },
-        {
-          sender: "bot",
-          text: "Thank you! We'll contact you shortly.",
-        },
-      ]);
-
-      setStep(3);
+      setStep(4);
     }
-
-    setInput("");
   };
 
   return (
-    <div className="fixed bottom-6 right-6 w-80 bg-white rounded-xl shadow-xl border">
-      <div className="bg-purple-600 text-white p-3 rounded-t-xl font-semibold">
-        LaunchPad Assistant
-      </div>
+    <>
+      {/* Floating Button */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="fixed bottom-24 right-6 z-50 bg-purple-600 text-white p-4 rounded-full shadow-lg hover:scale-105 transition"
+      >
+        💬
+      </button>
 
-      <div className="h-80 overflow-y-auto p-4 space-y-3">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`p-2 rounded-lg max-w-[80%] ${
-              msg.sender === "bot"
-                ? "bg-gray-100"
-                : "bg-purple-600 text-white ml-auto"
-            }`}
+      {/* Chat Window */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.95 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-40 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl border overflow-hidden"
           >
-            {msg.text}
-          </div>
-        ))}
-      </div>
+            {/* Header */}
+            <div className="bg-purple-600 text-white p-3 font-semibold">
+              LaunchPad AI Assistant
+            </div>
 
-      <div className="p-3 flex gap-2 border-t">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="flex-1 border rounded-md px-3 py-2"
-          placeholder="Type here..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter") sendMessage();
-          }}
-        />
+            {/* Messages */}
+            <div className="h-80 overflow-y-auto p-3 space-y-2">
+              {messages.map((m, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={`p-2 rounded-lg max-w-[80%] ${
+                    m.sender === "bot"
+                      ? "bg-gray-100"
+                      : "bg-purple-600 text-white ml-auto"
+                  }`}
+                >
+                  {m.text}
+                </motion.div>
+              ))}
 
-        <button
-          onClick={sendMessage}
-          className="bg-purple-600 text-white px-4 rounded-md"
-        >
-          Send
-        </button>
-      </div>
-    </div>
+              {/* Typing indicator */}
+              {typing && (
+                <div className="flex gap-1 px-2 py-2">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75" />
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150" />
+                </div>
+              )}
+
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Input */}
+            <div className="flex border-t p-2 gap-2">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                placeholder="Type your reply..."
+                className="flex-1 border rounded px-2 py-1 outline-none"
+              />
+
+              <button
+                onClick={handleSend}
+                className="bg-purple-600 text-white px-3 rounded"
+              >
+                ➤
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

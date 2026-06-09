@@ -2,7 +2,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import Layout from "./components/layout";
-import Chatbot from "./components/chatbot";
+import ContactForm from "./components/ContactForm";
 
 export default function Home() {
   return (
@@ -72,33 +72,10 @@ export default function Home() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="py-12 bg-gray-50">
+      <section id="contact" className="py-16 bg-gray-50">
         <h2 className="text-2xl font-bold mb-4">Contact</h2>
-        <form className="grid gap-4 max-w-xl">
-          <input
-            type="text"
-            placeholder="Name"
-            className="border p-3 rounded-md"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className="border p-3 rounded-md"
-          />
-          <textarea
-            rows={4}
-            placeholder="Your message"
-            className="border p-3 rounded-md"
-          ></textarea>
-          <button
-            type="submit"
-            className="bg-purple-600 text-white px-6 py-3 rounded-full hover:bg-purple-700"
-          >
-            Send Message
-          </button>
-        </form>
+        <ContactForm />
       </section>
-      <Chatbot />
     </Layout>
   );
 }
