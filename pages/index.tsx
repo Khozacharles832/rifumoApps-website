@@ -24,7 +24,7 @@ export default function Home() {
             href="#contact"
             className="bg-purple-600 text-white px-6 py-3 rounded-full hover:bg-purple-700"
           >
-            Let's Build Your App
+            Let&apos;s Build Your App
           </a>
         </div>
         <Image

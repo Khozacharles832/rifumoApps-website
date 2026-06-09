@@ -10,7 +10,7 @@ export default function ContactForm() {
         <div className="text-5xl mb-4">🎉</div>
         <h2 className="text-2xl font-bold text-purple-700 mb-2">Thank You!</h2>
         <p className="text-gray-600">
-          We've received your app idea and will get back to you shortly.
+          We&rsquo;ve received your app idea and will get back to you shortly.
         </p>
       </div>
     );
@@ -24,10 +24,10 @@ export default function ContactForm() {
       >
         <div>
           <h2 className="text-3xl font-bold text-purple-700">
-            Let's Build Your App
+            Let&apos;s Build Your App
           </h2>
           <p className="text-gray-600 mt-2">
-            Tell us about your idea and we'll contact you.
+            Tell us about your idea and we&apos;ll contact you.
           </p>
         </div>
 
