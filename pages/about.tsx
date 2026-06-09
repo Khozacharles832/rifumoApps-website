@@ -31,11 +31,12 @@ const About: NextPage = () => {
         <h2 className="text-2xl font-bold mb-4 mt-10">Our Values</h2>
         <ul className="list-disc pl-5 text-gray-700 space-y-2">
           <li>
-            <strong>Innovation:</strong> We’re always learning and experimenting
-            to stay ahead.
+            <strong>Innovation:</strong> We&rsquo;re always learning and
+            experimenting to stay ahead.
           </li>
           <li>
-            <strong>Quality:</strong> We don’t ship it until it’s right.
+            <strong>Quality:</strong> We don&rsquo;t ship it until it&rsquo;s
+            right.
           </li>
           <li>
             <strong>Clarity:</strong> In both code and communication.
